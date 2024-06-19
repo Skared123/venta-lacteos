@@ -9,6 +9,8 @@ import * as z from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signIn } from '@/lib/firebase'
+import { LoaderCircle } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 export default function SignInForm() {
 
@@ -37,11 +39,13 @@ export default function SignInForm() {
 
   /* ==== Sign In === */
   const onSubmit = async (user: z.infer<typeof formSchema>) => {
+    setIsLoading(true)
     try {
       let res = await signIn(user)
-      console.log(res)
-    } catch (error) {
-      console.log(error)
+    } catch (error : any) {
+      toast.error(error.message, { duration: 2500 })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -95,7 +99,11 @@ export default function SignInForm() {
           {/* ===Submit button */}
           <Button
           type='submit'
-          >Ingresar</Button>
+          disabled={isLoading}
+          >
+            {isLoading && <LoaderCircle className='mr-2 h-4 w-4 animate-spin '/>}
+            Ingresar
+          </Button>
         </div>
       </form>
       <p className='text-center text-sm text-muted-foreground'>
