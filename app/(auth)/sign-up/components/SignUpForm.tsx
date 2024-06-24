@@ -50,7 +50,6 @@ export default function SignUpForm() {
 
   /* ==== Sign Up === */
   const onSubmit = async (user: z.infer<typeof formSchema>) => {
-    console.log(user);
     setIsLoading(true);
     try {
       let res = await createUser(user);

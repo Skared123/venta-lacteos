@@ -8,12 +8,22 @@ import {
   updateProfile,
 } from "firebase/auth";
 import {
+  addDoc,
+  collection,
   doc,
   getDoc,
+  getDocs,
   getFirestore,
   serverTimestamp,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
+import {
+  getStorage,
+  uploadString,
+  getDownloadURL,
+  ref,
+} from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -32,6 +42,7 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+export const storage = getStorage(app);
 
 export default app;
 
@@ -74,7 +85,33 @@ export const setDocument = (path: string, data: any) => {
   return setDoc(doc(db, path), data);
 };
 
+export const addDocument = (path: string, data: any) => {
+  data.createdAt = serverTimestamp();
+  return addDoc(collection(db, path), data);
+};
+
 /* Get a document in a collection */
 export const getDocument = async (path: string) => {
   return (await getDoc(doc(db, path))).data();
+};
+
+/* Update a document in a collection */
+export const updateDocument = (path: string, data: any) => {
+  return updateDoc(doc(db, path), data);
+};
+
+export const getDocuments = async (path:string) => {
+  const querySnapshot = await getDocs(collection(db,path))
+  return querySnapshot.forEach((doc) => {
+    console.log(doc.id, " => ", doc.data());
+  })
+}
+
+/* ===============  LocalStorage Functions =================== */
+
+/* Upload a file with a base64 format and get the url */
+export const uploadBase64 = async (path: string, base64: string) => {
+  return uploadString(ref(storage, path), base64, 'data_url').then(() => {
+    return getDownloadURL(ref(storage, path))
+  })
 };

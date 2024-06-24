@@ -18,7 +18,7 @@ export default function RootLayout({
   const authRoutes = ["/", "sign-up", "forgot-password"];
   const isInAuthRoutes = authRoutes.includes(pathName);
 
-  if (user && isInAuthRoutes) return redirect("/dashboard");
+  if (user && isInAuthRoutes) return redirect("/dashboard/products");
 
   return (
     <html lang="en">
